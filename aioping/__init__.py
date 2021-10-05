@@ -324,6 +324,7 @@ async def mping(dest_addr, timeout=2, count=10, family=socket.AddressFamily.AF_I
     :param family:
     """
     pass_count = 0
+    delay_avg = 0
     for i in range(count):
         delay = None
 
@@ -337,7 +338,8 @@ async def mping(dest_addr, timeout=2, count=10, family=socket.AddressFamily.AF_I
 
         if delay is not None:
             delay *= 1000
+            delay_avg += delay
             logger.debug("%s get ping in %0.4fms" % (dest_addr, delay))
             pass_count += 1
     
-    return pass_count * 100 / count
+    return pass_count * 100 / count, delay_avg
