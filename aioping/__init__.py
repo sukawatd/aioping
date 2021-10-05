@@ -312,3 +312,32 @@ async def verbose_ping(dest_addr, timeout=2, count=3, family=None):
         if delay is not None:
             delay *= 1000
             logger.info("%s get ping in %0.4fms" % (dest_addr, delay))
+
+async def mping(dest_addr, timeout=2, count=10, family=socket.AddressFamily.AF_INET):
+    """
+    Send >count< ping to >dest_addr< with the given >timeout< and display
+    default count = 10 and ipv4
+    the result.
+    :param dest_addr:
+    :param timeout:
+    :param count:
+    :param family:
+    """
+    pass_count = 0
+    for i in range(count):
+        delay = None
+
+        try:
+            delay = await ping(dest_addr, timeout, family)
+        except TimeoutError as e:
+            logger.error("%s timed out after %ss" % (dest_addr, timeout))
+        except Exception as e:
+            logger.error("%s failed: %s" % (dest_addr, str(e)))
+            break
+
+        if delay is not None:
+            delay *= 1000
+            logger.info("%s get ping in %0.4fms" % (dest_addr, delay))
+            pass_count += 1
+    
+    return pass_count * 100 / count
